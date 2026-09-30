@@ -1,0 +1,5 @@
+src
+.git
+.env
+*.md
+*.bat

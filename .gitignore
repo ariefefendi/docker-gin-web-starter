@@ -1,0 +1,10 @@
+# Build Air
+src/tmp/
+
+# Rahasia lokal
+.env
+
+# Binary / OS
+*.exe
+.DS_Store
+Thumbs.db

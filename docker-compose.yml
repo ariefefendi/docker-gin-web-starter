@@ -1,0 +1,125 @@
+services:
+
+  # ==========================================================
+  # APPLICATION / GIN
+  # ==========================================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # === WAJIB BEDAKAN JIKA ADA PROJECT LAIN ===
+    container_name: kazuya-gin
+
+    restart: unless-stopped
+
+    working_dir: /app
+
+    # Semua variabel di .env diteruskan ke container
+    env_file:
+      - .env
+
+    ports:
+      # FORMAT: HOST_PORT:CONTAINER_PORT
+      # Port host diatur lewat HOST_APP_PORT di .env (default 8100).
+      # Port container mengikuti APP_PORT di .env (default 8000).
+      #
+      # === WAJIB BEDAKAN HOST_APP_PORT JIKA PORT 8100 SUDAH DIPAKAI ===
+      - "${HOST_APP_PORT:-8100}:${APP_PORT:-8000}"
+
+    volumes:
+      # Source code di komputer -> container
+      - ./src:/app
+
+      # Cache module Go (supaya tidak download ulang setiap restart)
+      - gin_mod_cache:/go/pkg/mod
+
+    depends_on:
+      kazuya-mysql:
+        condition: service_healthy
+
+    networks:
+      - kazuya-net
+
+  # ==========================================================
+  # MYSQL
+  # ==========================================================
+  kazuya-mysql:
+    image: mysql:8.0
+
+    # === WAJIB BEDAKAN JIKA ADA PROJECT LAIN ===
+    container_name: kazuya-mysql-gin
+
+    restart: unless-stopped
+
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+
+    ports:
+      # HOST (HOST_DB_PORT, default 3109) -> MYSQL CONTAINER 3306
+      #
+      # === WAJIB BEDAKAN HOST_DB_PORT JIKA 3109 SUDAH DIPAKAI ===
+      - "${HOST_DB_PORT:-3109}:3306"
+
+    volumes:
+      # === WAJIB BEDAKAN VOLUME JIKA PROJECT HARUS TERPISAH ===
+      - db_data_gin:/var/lib/mysql
+
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+    networks:
+      kazuya-net:
+        aliases:
+          - mysql
+          - database
+
+  # ==========================================================
+  # PHPMYADMIN
+  # ==========================================================
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+
+    # === WAJIB BEDAKAN JIKA ADA PROJECT LAIN ===
+    container_name: kazuya-phpmyadmin-gin
+
+    restart: unless-stopped
+
+    environment:
+      # Nama SERVICE MySQL di dalam Docker, BUKAN localhost
+      PMA_HOST: kazuya-mysql
+      PMA_USER: root
+      PMA_PASSWORD: ${DB_ROOT_PASSWORD}
+
+    ports:
+      # === WAJIB BEDAKAN HOST_PMA_PORT JIKA 9192 SUDAH DIPAKAI ===
+      - "${HOST_PMA_PORT:-9192}:80"
+
+    depends_on:
+      - kazuya-mysql
+
+    networks:
+      - kazuya-net
+
+# ==========================================================
+# VOLUMES
+# ==========================================================
+volumes:
+  # === WAJIB BEDAKAN NAMA JIKA PROJECT TERPISAH ===
+  db_data_gin:
+  gin_mod_cache:
+
+# ==========================================================
+# NETWORK
+# ==========================================================
+networks:
+  # === WAJIB BEDAKAN JIKA MENJALANKAN PROJECT TERPISAH ===
+  kazuya-net:
+    driver: bridge

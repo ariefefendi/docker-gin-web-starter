@@ -1,0 +1,76 @@
+{{define "content"}}
+<div class="page-head">
+  <h1>Units</h1>
+  <button id="btn-add" class="btn primary" type="button">+ Tambah</button>
+</div>
+
+<div class="card">
+  <div class="toolbar">
+    <input id="search" type="search" placeholder="Cari kode, nama, deskripsi…" autocomplete="off">
+    <select id="page-size" aria-label="Jumlah baris">
+      <option value="10">10</option>
+      <option value="25">25</option>
+      <option value="50">50</option>
+    </select>
+  </div>
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Reference</th>
+          <th>Kode</th>
+          <th>Nama</th>
+          <th>Deskripsi</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <div class="pager">
+    <span id="info"></span>
+    <div>
+      <button id="prev" class="btn" type="button">‹ Prev</button>
+      <button id="next" class="btn" type="button">Next ›</button>
+    </div>
+  </div>
+</div>
+
+<dialog id="modal">
+  <form id="form" autocomplete="off">
+    <h2 id="modal-title">Tambah Unit</h2>
+
+    <input type="hidden" id="f-id">
+
+    <label>Kode
+      <input id="f-code" maxlength="50" required>
+    </label>
+
+    <label>Nama
+      <input id="f-name" maxlength="100" required>
+    </label>
+
+    <label>Deskripsi
+      <textarea id="f-description" rows="3"></textarea>
+    </label>
+
+    <label class="check">
+      <input type="checkbox" id="f-active" checked> Aktif
+    </label>
+
+    <p id="form-error" class="error" hidden></p>
+
+    <div class="modal-actions">
+      <button type="button" class="btn" id="btn-cancel">Batal</button>
+      <button type="submit" class="btn primary">Simpan</button>
+    </div>
+  </form>
+</dialog>
+{{end}}
+
+{{define "scripts"}}
+<script src="/public/js/units.js"></script>
+{{end}}

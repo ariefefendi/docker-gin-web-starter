@@ -1,0 +1,27 @@
+{{define "layout"}}<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Title}} · {{.AppName}}</title>
+  <link rel="stylesheet" href="/public/css/app.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <a class="brand" href="/">{{.AppName}}</a>
+    <nav>
+      <a href="/" class="{{if eq .Active "home"}}active{{end}}">Dashboard</a>
+      <a href="/master-data/units" class="{{if eq .Active "units"}}active{{end}}">Units</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    {{block "content" .}}{{end}}
+  </main>
+
+  <footer class="footer">© {{year}} {{.AppName}}</footer>
+
+  {{block "scripts" .}}{{end}}
+</body>
+</html>{{end}}
