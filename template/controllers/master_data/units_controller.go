@@ -43,16 +43,19 @@ func (r unitRequest) input() services.UnitInput {
 
 // Index (WEB) menampilkan halaman daftar units.
 func (c *UnitsController) Index(ctx *gin.Context) {
-	ctx.HTML(http.StatusOK, "master_data/units", config.ViewData("Units", "units", nil))
+	ctx.HTML(http.StatusOK, "master_data/units", config.ViewData(ctx, "Units", "units", nil))
 }
 
 // GetDataAll (API) datatable server side.
-// Query: filtertext, start, length.
+// Parameter (query GET atau form POST dari jQuery DataTables):
+// filtertext, start, length, draw.
 func (c *UnitsController) GetDataAll(ctx *gin.Context) {
 
-	filter := strings.TrimSpace(ctx.Query("filtertext"))
-	start := clamp(atoi(ctx.Query("start"), 0), 0, 1_000_000)
-	length := clamp(atoi(ctx.Query("length"), 10), 1, 100)
+	// Request.FormValue membaca query string (GET) maupun body form (POST).
+	filter := strings.TrimSpace(ctx.Request.FormValue("filtertext"))
+	start := clamp(atoi(ctx.Request.FormValue("start"), 0), 0, 1_000_000)
+	length := clamp(atoi(ctx.Request.FormValue("length"), 10), 1, 100)
+	draw := atoi(ctx.Request.FormValue("draw"), 0)
 
 	items, total, filtered, err := c.service.Paginate(filter, start, length)
 	if err != nil {
@@ -61,6 +64,7 @@ func (c *UnitsController) GetDataAll(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
+		"draw":            draw,
 		"RecordsTotal":    total,
 		"RecordsFiltered": filtered,
 		"Data":            resources.NewUnitCollection(items),

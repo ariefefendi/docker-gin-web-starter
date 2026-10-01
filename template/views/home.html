@@ -1,17 +1,25 @@
 {{define "content"}}
-<div class="page-head">
-  <h1>{{.Title}}</h1>
-</div>
+<div class="container-fluid content-inner mt-n5 py-0">
+  <div class="row">
 
-<div class="grid">
-  <a class="card link-card" href="/master-data/units">
-    <h2>Units</h2>
-    <p>Kelola master satuan barang.</p>
-  </a>
+    <div class="col-md-6 col-lg-4">
+      <a class="card text-decoration-none" href="/master-data/units">
+        <div class="card-body">
+          <h5 class="card-title mb-1">Units</h5>
+          <p class="text-muted mb-0">Kelola master satuan barang.</p>
+        </div>
+      </a>
+    </div>
 
-  <a class="card link-card" href="/health">
-    <h2>Health</h2>
-    <p>Cek status aplikasi dan database.</p>
-  </a>
+    <div class="col-md-6 col-lg-4">
+      <a class="card text-decoration-none" href="/health">
+        <div class="card-body">
+          <h5 class="card-title mb-1">Health</h5>
+          <p class="text-muted mb-0">Cek status aplikasi dan database.</p>
+        </div>
+      </a>
+    </div>
+
+  </div>
 </div>
 {{end}}

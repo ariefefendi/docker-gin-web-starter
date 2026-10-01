@@ -7,9 +7,6 @@ echo ===============================
 REM Hanya membersihkan project INI (tidak menyentuh project Docker lain)
 docker compose down --remove-orphans
 
-docker compose exec app air -c .air.toml
-docker compose config
-
 docker compose build --no-cache
 
 docker compose up -d

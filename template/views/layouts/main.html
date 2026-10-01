@@ -1,27 +1,152 @@
-{{define "layout"}}<!DOCTYPE html>
-<html lang="id">
+{{define "layout"}}<!doctype html>
+{{/*
+  Padanan head.blade.php + template_admin.blade.php.
+
+  Urutan script (PENTING, sama seperti di Laravel):
+    1. library (jQuery, Knockout, SweetAlert2, dst.)   -> <head>
+    2. window.AUTH_USER / CURRENT_MODULE dari server   -> <head>
+    3. model_head.js   : membuat objek global `model`  -> <head>
+    4. block "scripts"     : script halaman (units.js)  -> akhir <body>
+    5. applyBindings_Main.js : ko.applyBindings(model) -> paling akhir
+
+  Semua asset Laravel (public/assets, public/assetsadmin) disalin apa adanya
+  ke folder public/ di project ini; URL: asset('x') -> /public/x
+*/}}
+<html lang="en" dir="ltr">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{.Title}} · {{.AppName}}</title>
-  <link rel="stylesheet" href="/public/css/app.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{.CSRFToken}}">
+    <title>{{.Title}} · {{.AppName}}</title>
+
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/public/assets/images/icons/smartroute-logo.png" />
+
+    <!-- Aos Animation Css -->
+    <link rel="stylesheet" href="/public/assets/vendor/aos/dist/aos.css" />
+
+    <!-- Hope Ui Design System Css -->
+    <link rel="stylesheet" href="/public/assets/css/hope-ui.min.css?v=2.0.0" />
+
+    <!-- Custom Css -->
+    <link rel="stylesheet" href="/public/assets/css/custom.css?v=1.0.0" />
+    <link rel="stylesheet" href="/public/assets/css/custom.min.css?v=2.0.0" />
+
+    <!-- Dark Css -->
+    <link rel="stylesheet" href="/public/assets/css/dark.min.css" />
+
+    <!-- Customizer Css -->
+    <link rel="stylesheet" href="/public/assets/css/customizer.min.css" />
+
+    <!-- RTL Css -->
+    <link rel="stylesheet" href="/public/assets/css/rtl.min.css" />
+
+    <!-- icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <!-- underscore -->
+    <script src="/public/assetsadmin/js/underscore.js"></script>
+
+    <!-- jquery (dua versi dipertahankan seperti head.blade.php asli;
+         hapus salah satu jika sudah dipastikan aman) -->
+    <script src="/public/assetsadmin/js/jquery.min.js"></script>
+    <script src="/public/assetsadmin/js/jquery_v3.6.0.min.js"></script>
+
+    <!-- ApexChart JS -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <!-- knockout -->
+    <script src="/public/assetsadmin/knockout/knockout_3.4.2.js"></script>
+    <script src="/public/assetsadmin/knockout/knockout.mapping-latest.js"></script>
+    <script src="/public/assetsadmin/knockout/knockout-file-bindings.js"></script>
+    <link rel="stylesheet" href="/public/assetsadmin/knockout/knockout-file-bindings.css" />
+
+    <!-- Library Bundle Script -->
+    <script src="/public/assets/js/core/libs.min.js"></script>
+
+    <!-- DataTables (jQuery + Bootstrap 5).
+         Hapus 3 baris ini jika DataTables sudah termasuk di libs.min.js / template_admin. -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- token input -->
+    <script src="/public/assetsadmin/token_input/jquery.tokeninput.js"></script>
+    <link href="/public/assetsadmin/token_input/token-input.css" rel="stylesheet">
+    <link href="/public/assetsadmin/token_input/token-input-facebook.css" rel="stylesheet">
+
+    <!-- alert -->
+    <script src="/public/assetsadmin/alert/sweetalert2.all.min.js"></script>
+
+    <script src="/public/assetsadmin/js/generatepass.js"></script>
+
+    <!-- moment js for date format -->
+    <script src="/public/assetsadmin/js/moment.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- Editor -->
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    <script src="/public/assetsadmin/js/quill-editor-knockout-binding.js"></script>
+
+    <!-- Select2 -->
+    <link href="/public/assetsadmin/css/plugins/extensions/select2.min.css" rel="stylesheet" />
+    <script src="/public/assetsadmin/js/scripts/extensions/select2.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <!-- Style dari head.blade.php (preloader, permission-disabled) -->
+    <link rel="stylesheet" href="/public/css/head.css">
+
+    <!-- Data dari server (padanan @json(...) di head.blade.php) -->
+    <script>
+        window.AUTH_USER = {{.AuthUser}};
+        window.CURRENT_MODULE = {{.CurrentModule}};
+    </script>
+
+    <!-- Objek global `model` (padanan <script> di head.blade.php) -->
+    <script src="/public/js/model_head.js"></script>
 </head>
-<body>
 
-  <header class="topbar">
-    <a class="brand" href="/">{{.AppName}}</a>
-    <nav>
-      <a href="/" class="{{if eq .Active "home"}}active{{end}}">Dashboard</a>
-      <a href="/master-data/units" class="{{if eq .Active "units"}}active{{end}}">Units</a>
+<body class="light theme-default theme-with-animation card-default theme-color-default">
+
+    <!-- loader Start -->
+    <div class="preloader" style="background-color: white; opacity: 0.4;" data-bind='visible: model.Processing'>
+        <div class="loading text-center">
+            <div class="loader-body">
+                <img src="/public/assets/images/loading-02.webp" alt="loader" class="light-loader img-fluid w-50"
+                    width="200" height="200">
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         HEADER / SIDEBAR
+         Placeholder sederhana. Ganti dengan markup sidebar + header dari
+         template_admin.blade.php milik Anda.
+         ===================================================================== -->
+    <nav class="navbar navbar-expand-lg bg-white border-bottom px-3">
+        <a class="navbar-brand fw-bold" href="/">{{.AppName}}</a>
+        <div class="navbar-nav flex-row gap-3">
+            <a class="nav-link {{if eq .Active "home"}}active fw-bold{{end}}" href="/">Dashboard</a>
+            <a class="nav-link {{if eq .Active "units"}}active fw-bold{{end}}" href="/master-data/units">Units</a>
+        </div>
     </nav>
-  </header>
 
-  <main class="container">
-    {{block "content" .}}{{end}}
-  </main>
+    <main class="app-content">
+        {{block "content" .}}{{end}}
+    </main>
 
-  <footer class="footer">© {{year}} {{.AppName}}</footer>
+    {{block "scripts" .}}{{end}}
 
-  {{block "scripts" .}}{{end}}
+    <!-- CORE: ko.applyBindings(model) -->
+    <script src="/public/js/applyBindings_Main.js"></script>
 </body>
+
 </html>{{end}}

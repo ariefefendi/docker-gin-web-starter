@@ -9,7 +9,7 @@ services:
       dockerfile: Dockerfile
 
     # === WAJIB BEDAKAN JIKA ADA PROJECT LAIN ===
-    container_name: kazuya-gin
+    container_name: kazuya-gin-mvvm
 
     restart: unless-stopped
 
@@ -48,7 +48,7 @@ services:
     image: mysql:8.0
 
     # === WAJIB BEDAKAN JIKA ADA PROJECT LAIN ===
-    container_name: kazuya-mysql-gin
+    container_name: kazuya-mysql-gin-mvvm
 
     restart: unless-stopped
 
@@ -69,7 +69,7 @@ services:
       - db_data_gin:/var/lib/mysql
 
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent" ]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -88,7 +88,7 @@ services:
     image: phpmyadmin/phpmyadmin
 
     # === WAJIB BEDAKAN JIKA ADA PROJECT LAIN ===
-    container_name: kazuya-phpmyadmin-gin
+    container_name: kazuya-phpmyadmin-gin-mvvm
 
     restart: unless-stopped
 
@@ -116,9 +116,9 @@ volumes:
   db_data_gin:
   gin_mod_cache:
 
-# ==========================================================
-# NETWORK
-# ==========================================================
+    # ==========================================================
+    # NETWORK
+    # ==========================================================
 networks:
   # === WAJIB BEDAKAN JIKA MENJALANKAN PROJECT TERPISAH ===
   kazuya-net:

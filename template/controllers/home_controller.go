@@ -12,5 +12,5 @@ import (
 
 // Home menampilkan halaman dashboard (views/home.html).
 func Home(ctx *gin.Context) {
-	ctx.HTML(http.StatusOK, "home", config.ViewData("Dashboard", "home", nil))
+	ctx.HTML(http.StatusOK, "home", config.ViewData(ctx, "Dashboard", "home", nil))
 }

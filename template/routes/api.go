@@ -40,7 +40,8 @@ func RegisterAPI(r *gin.Engine, db *gorm.DB) {
 	units := master_data.NewUnitsController(db)
 	g := api.Group("/master-data/units")
 	{
-		g.GET("/data", units.GetDataAll)      // datatable server side
+		g.GET("/data", units.GetDataAll)      // datatable server side (GET)
+		g.POST("/data", units.GetDataAll)     // datatable server side (POST, dipakai jQuery DataTables)
 		g.GET("/select", units.GetDataSelect) // satu data (?reference=)
 		g.POST("", units.Insert)              // tambah
 		g.PUT("", units.Update)               // ubah

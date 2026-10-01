@@ -86,12 +86,23 @@ func (v *ViewRenderer) Instance(name string, data any) render.Render {
 }
 
 // ViewData membuat data dasar untuk semua halaman:
-// Title (judul), Active (menu aktif), AppName; extra digabung di atasnya.
-func ViewData(title, active string, extra gin.H) gin.H {
+//
+//	Title         judul halaman
+//	Active        menu aktif sekaligus nama module (key permission)
+//	AppName       nama aplikasi
+//	AuthUser      data user + permission -> window.AUTH_USER
+//	CurrentModule module aktif            -> window.CURRENT_MODULE
+//	CSRFToken     token CSRF (kosong; isi jika memasang middleware CSRF)
+//
+// extra digabung di atasnya.
+func ViewData(ctx *gin.Context, title, active string, extra gin.H) gin.H {
 	data := gin.H{
-		"Title":   title,
-		"Active":  active,
-		"AppName": Env("APP_NAME", "Go Web"),
+		"Title":         title,
+		"Active":        active,
+		"AppName":       Env("APP_NAME", "Go Web"),
+		"AuthUser":      AuthUser(ctx),
+		"CurrentModule": active,
+		"CSRFToken":     "",
 	}
 	for k, v := range extra {
 		data[k] = v

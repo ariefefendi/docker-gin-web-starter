@@ -1,0 +1,54 @@
+/* Dari <style> di head.blade.php */
+
+.preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgb(8 48 67) !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.3s ease;
+}
+
+/* class dinamis permission-disabled */
+.permission-disabled {
+    position: relative;
+    cursor: not-allowed !important;
+    opacity: 0.5;
+}
+
+.permission-disabled:hover {
+    opacity: 1;
+    color: #dc3545 !important;
+}
+
+.permission-disabled:hover::after {
+    content: "!";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 22px;
+    height: 22px;
+    border: 2px solid #dc3545;
+    border-radius: 50%;
+    background: #fff;
+    color: #dc3545;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 18px;
+    text-align: center;
+    z-index: 10;
+}
+
+/* Ruang di bawah navbar placeholder.
+   View memakai "mt-n5" (margin negatif khas Hope UI, yang biasanya
+   ditutup banner header). Hapus jika sudah memakai header template_admin. */
+.app-content {
+    padding-top: 4.5rem;
+    padding-bottom: 2rem;
+}
